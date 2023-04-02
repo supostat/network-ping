@@ -41,7 +41,7 @@ func CIDRRangeToIPv4Range(cidrs []string) (ipStart string, ipEnd string, err err
 }
 
 // Convert IPv4 range into CIDR
-func iPv4RangeToCIDRRange(ipStart string, ipEnd string) (cidrs []string, err error) {
+func IPv4RangeToCIDRRange(ipStart string, ipEnd string) (cidrs []string, err error) {
 
 	cidr2mask := []uint32{
 		0x00000000, 0x80000000, 0xC0000000,
@@ -91,7 +91,7 @@ func iPv4RangeToCIDRRange(ipStart string, ipEnd string) (cidrs []string, err err
 	return cidrs, err
 }
 
-//Convert IPv4 to uint32
+// Convert IPv4 to uint32
 func iPv4ToUint32(iPv4 string) uint32 {
 
 	ipOctets := [4]uint64{}
@@ -105,7 +105,7 @@ func iPv4ToUint32(iPv4 string) uint32 {
 	return uint32(result)
 }
 
-//Convert uint32 to IP
+// Convert uint32 to IP
 func uInt32ToIPv4(iPuInt32 uint32) (iP string) {
 	iP = fmt.Sprintf("%d.%d.%d.%d",
 		iPuInt32>>24,
@@ -116,15 +116,15 @@ func uInt32ToIPv4(iPuInt32 uint32) (iP string) {
 }
 
 // Parse 'ips' parameter into the array of CDIR (https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing)
-func getCIDRs(ipsParameter string) (cidrs []string, err error) {
+func GetCIDRs(ipsParameter string) (cidrs []string, err error) {
 
 	paramParts := strings.Split(ipsParameter, ",")
 
-	var cidrRegEx = regexp.MustCompile(`^([0-9]{1,3}\.){3}[0-9]{1,3}?$`)
+	var cidrRegEx = regexp.MustCompile(`^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$`)
 
 	for _, v := range paramParts {
 		paramParts := strings.TrimSpace(v)
-
+		log.Println(cidrRegEx.MatchString(paramParts))
 		if cidrRegEx.MatchString(paramParts) {
 			cidrs = append(cidrs, paramParts)
 			continue
@@ -138,7 +138,7 @@ func getCIDRs(ipsParameter string) (cidrs []string, err error) {
 			ipEnd = strings.TrimSpace(ipParamParts[1])
 		}
 
-		paramPartsCidrs, err := iPv4RangeToCIDRRange(ipStart, ipEnd)
+		paramPartsCidrs, err := IPv4RangeToCIDRRange(ipStart, ipEnd)
 
 		if err != nil {
 			fmt.Errorf("enable to parse IP range: %s - %s", ipStart, ipEnd)
